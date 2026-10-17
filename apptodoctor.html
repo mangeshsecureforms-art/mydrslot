@@ -120,6 +120,53 @@ aside h2{font:700 18px var(--head)}
   .toast{width:calc(100% - 32px);text-align:center}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== Mobile polish (CSS only) ===== */
+html{-webkit-text-size-adjust:100%}
+body{overflow-x:hidden}
+.head-actions{display:flex;align-items:center;gap:6px}
+.x-close,.sheet-foot{display:none}
+@media (hover:none){.card:hover{transform:none;box-shadow:none}}
+@media (max-width:860px){
+  .toggle{min-height:44px;padding:10px 18px;white-space:nowrap}
+  .sort{min-height:44px;font-size:16px}
+  .top h2{font-size:19px}
+
+  /* filters: full-screen sheet with Close button */
+  body:has(aside.open){overflow:hidden}
+  aside.open{display:flex;flex-direction:column;position:fixed;inset:0;z-index:50;margin:0;border:0;border-radius:0;padding:0;background:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  aside.open .side-head{position:sticky;top:0;z-index:2;background:#fff;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top,0px));border-bottom:1px solid var(--line)}
+  aside.open .side-head h2{font-size:20px}
+  aside.open .link{min-height:44px;padding:4px 10px}
+  aside.open .x-close{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font-weight:600;cursor:pointer}
+  aside.open .x-close:hover{background:var(--mist)}
+  aside.open .f{margin:18px 16px 0}
+  aside.open .f label{font-size:15px}
+  aside.open .f input[type=text],aside.open .f input[type=search],aside.open .f select{font-size:16px;min-height:48px;padding:12px}
+  aside.open .f input[type=range]{height:34px}
+  aside.open .sheet-foot{display:block;position:sticky;bottom:0;margin-top:auto;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid var(--line);box-shadow:0 -6px 18px rgba(16,40,60,.08)}
+  aside.open .sheet-foot .btn{width:100%;min-height:50px;font-size:16px}
+  aside.open .f:nth-last-child(2){margin-bottom:20px}
+}
+@media (max-width:520px){
+  .bar{padding-top:14px;padding-bottom:14px}
+  .hero{padding-top:6px;padding-bottom:30px}
+  main{margin-top:-18px}
+  .top{padding-top:18px}
+  .top>div{display:grid!important;grid-template-columns:auto 1fr;gap:10px}
+  .card{gap:10px}
+  .qual{font-size:13.5px}
+  .facts strong{font-size:16px}
+  .actions button{min-height:48px;font-size:15px}
+  .state{padding:32px 16px}
+  .toast{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+}
+@media (max-width:340px){
+  .head-actions .link{display:none}
+  .facts{grid-template-columns:1fr}
+  .facts div+div{border-left:0;border-top:1px solid var(--line)}
+}
+@media (max-height:480px) and (orientation:landscape){aside.open .sheet-foot{position:static}}
 </style>
 </head>
 <body>
@@ -136,7 +183,11 @@ aside h2{font:700 18px var(--head)}
 
 <main>
   <aside id="filters" aria-label="Filters">
-    <div class="side-head"><h2>Filters</h2><button class="link" id="reset" type="button">Reset all</button></div>
+    <div class="side-head"><h2>Filters</h2>
+      <div class="head-actions">
+        <button class="link" id="reset" type="button">Reset all</button>
+        <button class="x-close" type="button" aria-label="Close filters" onclick="document.getElementById('filters').classList.remove('open')">&#10005; Close</button>
+      </div></div>
 
     <div class="f"><label for="q">Doctor or clinic name</label>
       <input id="q" type="search" placeholder="Search name or clinic"></div>
@@ -163,6 +214,8 @@ aside h2{font:700 18px var(--head)}
     <div class="f"><label for="fee">Maximum consultation fee</label>
       <input id="fee" type="range" min="0" max="2000" step="50" value="2000">
       <div class="fee-row"><span>₹0</span><b id="feeVal">Any</b></div></div>
+
+    <div class="sheet-foot"><button class="btn" type="button" onclick="document.getElementById('filters').classList.remove('open')">Show doctors</button></div>
   </aside>
 
   <section>
