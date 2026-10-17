@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ApptoDoctor – Book appointment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#10283c; --muted:#5d7080; --line:#dbe6ea; --mist:#eef5f6; --paper:#ffffff;
+  --teal:#0b7f84; --teal-dark:#075f63; --teal-soft:#d9f0f0; --amber:#f2a93b; --danger:#b3261e; --ok:#177245;
+  --head:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --body:'Figtree','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--body);color:var(--ink);background:var(--mist);line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+header{background:var(--ink);color:#fff}
+.bar{max-width:1180px;margin:0 auto;padding:18px 20px;display:flex;align-items:center;gap:12px}
+.logo{width:40px;height:40px;border-radius:12px;background:var(--amber);color:var(--ink);display:grid;place-items:center;font:800 24px var(--head)}
+.brand{font:700 22px var(--head);letter-spacing:-.01em}
+.hero{max-width:1180px;margin:0 auto;padding:18px 20px 44px}
+.hero h1{font:800 clamp(26px,4.5vw,42px)/1.1 var(--head);letter-spacing:-.02em}
+.hero p{color:#b9cbd6;margin-top:10px;max-width:520px}
+.back{background:none;border:0;color:#b9cbd6;cursor:pointer;padding:0 0 10px;font-weight:600}
+.back:hover{color:#fff}
+
+.btn{border:0;border-radius:10px;padding:12px 22px;background:var(--teal);color:#fff;font-weight:600;cursor:pointer}
+.btn:hover:not(:disabled){background:var(--teal-dark)}
+.btn:disabled{background:#a9bcc4;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--teal);border:1.5px solid var(--teal)}
+.btn.ghost:hover{background:var(--teal-soft)}
+
+main{max-width:1180px;margin:-24px auto 60px;padding:0 20px;display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:22px}
+.doc{position:sticky;top:16px;display:flex;flex-direction:column;gap:14px}
+.who{display:flex;gap:14px;align-items:center}
+.av{width:76px;height:76px;border-radius:18px;object-fit:cover;flex:none;background:var(--teal-soft);color:var(--teal-dark);display:grid;place-items:center;font:700 26px var(--head)}
+.who h2{font:700 20px var(--head);line-height:1.2}
+.who>div{min-width:0}
+.spec{display:inline-block;margin-top:4px;background:var(--teal-soft);color:var(--teal-dark);font-size:13px;font-weight:600;padding:2px 10px;border-radius:99px}
+.qual{font-size:14px;color:var(--muted)}
+.facts{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:12px}
+.facts div{padding:10px 12px}
+.facts div+div{border-left:1px solid var(--line)}
+.facts small{display:block;color:var(--muted);font-size:12px}
+.facts strong{font:700 17px var(--head)}
+.loc{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.loc b{color:var(--ink)}
+
+.panel h3{font:700 18px var(--head)}
+.sub{font-size:14px;color:var(--muted);margin:2px 0 14px}
+.dates{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px;scrollbar-width:thin}
+.date{flex:none;width:72px;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:10px 4px;text-align:center;cursor:pointer}
+.date small{display:block;font-size:12px;color:var(--muted)}
+.date strong{display:block;font:700 22px var(--head);line-height:1.2}
+.date:hover{border-color:var(--teal)}
+.date[aria-pressed=true]{background:var(--teal);border-color:var(--teal);color:#fff}
+.date[aria-pressed=true] small{color:#d9f0f0}
+.times{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(150px,100%),1fr));gap:10px;margin-top:6px}
+.time{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:11px 8px;font-weight:600;cursor:pointer;text-align:center}
+.time small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+.time:hover{border-color:var(--teal)}
+.time[aria-pressed=true]{background:var(--teal-soft);border-color:var(--teal);color:var(--teal-dark)}
+.summary{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.summary p{font-size:14px;color:var(--muted)}
+.summary b{color:var(--ink);display:block;font-size:16px}
+
+.state{text-align:center;padding:40px 16px}
+.state h3{font:700 20px var(--head);margin-bottom:6px}
+.state p{color:var(--muted);max-width:460px;margin:0 auto 14px;overflow-wrap:anywhere}
+.state.err h3{color:var(--danger)}
+.state.ok h3{color:var(--ok)}
+.tick{width:56px;height:56px;border-radius:50%;background:var(--teal-soft);color:var(--teal-dark);display:grid;place-items:center;font-size:28px;margin:0 auto 12px}
+.sk{height:120px;border-radius:14px;background:linear-gradient(90deg,#e4eef0 25%,#f3f8f9 50%,#e4eef0 75%);background-size:200% 100%;animation:sh 1.2s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+
+dialog{border:0;border-radius:20px;padding:0;width:min(520px,calc(100% - 24px));max-height:calc(100% - 24px);box-shadow:0 24px 60px rgba(16,40,60,.35)}
+dialog::backdrop{background:rgba(16,40,60,.55)}
+.mhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:20px 22px 0}
+.mhead h3{font:700 20px var(--head)}
+.x{background:none;border:0;font-size:26px;line-height:1;cursor:pointer;color:var(--muted);padding:0 4px}
+.mbody{padding:14px 22px 22px}
+.chosen{background:var(--teal-soft);color:var(--teal-dark);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;margin-bottom:6px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.f{margin-top:14px}
+.f label{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+.f input,.f select,.f textarea{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+.f textarea{resize:vertical;min-height:70px}
+.f input[readonly]{background:var(--mist);color:var(--muted);font-weight:600}
+.f .e{color:var(--danger);font-size:13px;margin-top:4px;display:none}
+.f.bad .e{display:block}
+.f.bad input,.f.bad select{border-color:var(--danger)}
+.formerr{color:var(--danger);font-size:14px;margin-top:12px;display:none;overflow-wrap:anywhere}
+.mbody .btn{width:100%;margin-top:18px}
+
+@media (max-width:1024px){main{grid-template-columns:300px 1fr;gap:18px}}
+@media (max-width:860px){
+  main{grid-template-columns:1fr;padding:0 16px;margin-top:-20px}
+  .doc{position:static}
+  .bar,.hero{padding-left:16px;padding-right:16px}
+  .hero{padding-bottom:36px}
+}
+@media (max-width:520px){
+  .brand{font-size:19px}
+  .logo{width:36px;height:36px;font-size:21px}
+  .panel{padding:16px;border-radius:16px}
+  .row{grid-template-columns:1fr;gap:0}
+  .summary{flex-direction:column;align-items:stretch}
+  .summary .btn{width:100%}
+  .mhead{padding:16px 16px 0}.mbody{padding:12px 16px 18px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="logo" aria-hidden="true">A</div>
+    <div class="brand">ApptoDoctor</div>
+  </div>
+  <div class="hero">
+    <button class="back" type="button" onclick="history.back()">&larr; Back to doctors</button>
+    <h1 id="heroTitle">Book your appointment</h1>
+    <p id="heroSub">Pick a date and time that suits you. We'll email you to confirm.</p>
+  </div>
+</header>
+
+<main id="main">
+  <aside class="panel doc" id="doctor" aria-label="Doctor details"><div class="sk"></div></aside>
+  <section class="panel" id="slots" aria-live="polite"><div class="sk"></div></section>
+</main>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <div class="mhead"><h3 id="dlgTitle">Patient details</h3><button class="x" type="button" id="dlgX" aria-label="Close">&times;</button></div>
+  <div class="mbody" id="dlgBody">
+    <div class="chosen" id="chosen"></div>
+    <form id="form" novalidate>
+      <div class="f"><label for="pSlot">Slot ID</label><input id="pSlot" readonly tabindex="-1"></div>
+      <div class="f"><label for="pName">Full name *</label><input id="pName" autocomplete="name"><div class="e">Please enter your name.</div></div>
+      <div class="row">
+        <div class="f"><label for="pEmail">Email *</label><input id="pEmail" type="email" autocomplete="email"><div class="e">Enter a valid email.</div></div>
+        <div class="f"><label for="pPhone">Phone *</label><input id="pPhone" type="tel" inputmode="tel" autocomplete="tel"><div class="e">Enter a valid phone.</div></div>
+      </div>
+      <div class="row">
+        <div class="f"><label for="pAge">Age</label><input id="pAge" type="number" min="0" max="120" inputmode="numeric"></div>
+        <div class="f"><label for="pGender">Gender</label>
+          <select id="pGender"><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option></select></div>
+      </div>
+      <div class="f"><label for="pReason">Reason for visit</label><textarea id="pReason" placeholder="Briefly describe your concern"></textarea></div>
+      <div class="formerr" id="formErr"></div>
+      <button class="btn" type="submit" id="submitBtn">Book appointment</button>
+    </form>
+  </div>
+</dialog>
+
+<script>
+/* ============ CONFIG – edit these ============ */
+const CONFIG = {
+  // Flow 1: load doctor + available slots. Called as  URL&ID=<doctor id>
+  SLOTS_FLOW_URL: "https://3194f3baa5b1e555a57785512f7ae2.da.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/23/workflows/015d4e9315964027bfbe56e9c327a60b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=u0g0Mnl-2NmhJDDppNGFoAyTRRpUav7_pClHo6Z6mzU",
+  SLOTS_METHOD: "POST",      // must match the trigger Method in flow 1
+  ID_PARAM: "ID",
+  // Flow 2: receives the booking form, holds the slot and emails the patient (Confirm / Cancel).
+  BOOK_FLOW_URL: "https://3194f3baa5b1e555a57785512f7ae2.da.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/22/workflows/aa437be109e64a308dc7db64b9684a90/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=M5k0H24UswYw1KsQzJu0OIGE0kdJ1JkhwUxdu8bsBsg",
+  CURRENCY: "₹"
+};
+/* ============================================= */
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const params = new URLSearchParams(location.search);
+const DOCTOR_ID = (params.get("ID") || params.get("id") || "").trim();
+let DOCTOR = null, SLOTS = [], RECEIVED = 0, selDate = "", selSlot = null;
+
+/* ---------- helpers ---------- */
+const norm = k => String(k).toLowerCase().replace(/^[a-z0-9]{2,8}_(?=[a-z])/,"").replace(/[^a-z0-9]/g,"");
+const ALIASES = {
+  name:["doctorname","name"], spec:["specialization","specialisation","speciality","specialty"], qual:["qualification","qualifications"],
+  exp:["experience","yearsofexperience"], fee:["consultationfee","fee","fees"], clinic:["clinicname","clinic"],
+  address:["address"], city:["city"], pin:["pincode","pin","zipcode"],
+  img:["doctorimageurl","doctorimgurl","profileimageurl","imageurl","imgurl","doctorimage","profileimage","image","photo"],
+  id:["doctorid","id"],
+  date:["date","slotdate"], start:["starttime","start"], end:["endtime","end"], slotid:["slotid"]
+};
+function picker(raw){
+  const flat={}; for(const k in raw){ if(!k.includes("@")) flat[norm(k)]=raw[k]; }
+  return f => { for(const a of ALIASES[f]) if(flat[a]!==undefined && flat[a]!==null && flat[a]!=="") return flat[a]; return ""; };
+}
+const num = v => { const n=parseFloat(String(v).replace(/[^0-9.]/g,"")); return isNaN(n)?0:n; };
+function imgSrc(v){ v=String(v||""); return /^(https?:|data:|\/)/i.test(v) ? v : (/^[A-Za-z0-9+/=\s]{100,}$/.test(v) ? "data:image/jpeg;base64,"+v.replace(/\s/g,"") : ""); }
+function mapDoctor(raw){
+  const p=picker(raw||{});
+  return { name:String(p("name")), spec:String(p("spec")), qual:String(p("qual")), exp:num(p("exp")), fee:num(p("fee")),
+    clinic:String(p("clinic")), address:String(p("address")), city:String(p("city")), pin:String(p("pin")), img:imgSrc(p("img")) };
+}
+const pad = n => String(n).padStart(2,"0");
+function parseDateKey(v){ const m=String(v).match(/(\d{4})-(\d{2})-(\d{2})/); return m ? m[1]+"-"+m[2]+"-"+m[3] : ""; }
+function parseMinutes(v){
+  v=String(v); let m=v.match(/T(\d{2}):(\d{2})/);
+  if(m) return +m[1]*60 + +m[2];
+  m=v.match(/(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)?/i); if(!m) return NaN;
+  let h=+m[1]; const ap=(m[3]||"").toUpperCase();
+  if(ap==="PM"&&h<12) h+=12; if(ap==="AM"&&h===12) h=0;
+  return h*60 + +m[2];
+}
+const fmt12 = min => { const h=Math.floor(min/60), m=min%60; return (h%12||12)+":"+pad(m)+" "+(h>=12?"PM":"AM"); };
+const fmt24 = min => pad(Math.floor(min/60))+":"+pad(min%60);
+const dateObj = key => { const [y,m,d]=key.split("-").map(Number); return new Date(y,m-1,d); };
+const dateLong = key => dateObj(key).toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+const initials = n => String(n).replace(/^dr\.?\s*/i,"").split(/\s+/).slice(0,2).map(w=>w[0]||"").join("").toUpperCase();
+
+function mapSlot(raw){
+  const p=picker(raw), s=p("start"), e=p("end");
+  const start=parseMinutes(s), end=parseMinutes(e);
+  const date=parseDateKey(p("date")) || parseDateKey(s);
+  const rowId=String(raw.Id ?? raw.id ?? "");
+  const id=String(p("slotid")) || rowId;   // "Slot ID" column; falls back to the row Id
+  return { id, rowId, date, start, end };
+}
+
+/* ---------- flow calls ---------- */
+async function callFlow(url, opts){
+  const res = await fetch(url, opts);
+  const text = await res.text();
+  if(!res.ok) throw new Error("Status " + res.status + (text ? ": " + text.slice(0,300) : "."));
+  try{ let d=JSON.parse(text); if(typeof d==="string"){ try{ d=JSON.parse(d); }catch(e){} } return d; }catch(e){ return text; }
+}
+const withParam = (url,k,v) => url + (url.includes("?")?"&":"?") + encodeURIComponent(k) + "=" + encodeURIComponent(v);
+
+/* ---------- load doctor + slots ---------- */
+async function loadSlots(){
+  $("slots").innerHTML = '<div class="sk"></div>';
+  try{
+    if(!CONFIG.SLOTS_FLOW_URL) throw new Error("SLOTS_FLOW_URL is empty. Paste your flow 1 URL in CONFIG.");
+    if(!DOCTOR_ID) throw new Error("No doctor selected. Open this page as appointments?ID=<doctor id>.");
+    const data = await callFlow(withParam(CONFIG.SLOTS_FLOW_URL, CONFIG.ID_PARAM, DOCTOR_ID), { method: CONFIG.SLOTS_METHOD });
+    let doc=null, rows=[];
+    if(Array.isArray(data)){ rows=data; doc=data[0]; }
+    else if(data && typeof data==="object"){
+      doc = data.doctor || data.Doctor || null;
+      rows = data.slots || data.Slots || data.value || [];
+      if(!doc && rows[0]) doc = rows[0];
+    }
+    DOCTOR = doc ? mapDoctor(doc) : null;
+    if(DOCTOR && !DOCTOR.name) DOCTOR = null;   // slots-only response: no doctor panel
+    RECEIVED = rows.length;
+    const now=new Date(), today=now.getFullYear()+"-"+pad(now.getMonth()+1)+"-"+pad(now.getDate()), nowMin=now.getHours()*60+now.getMinutes();
+    SLOTS = rows.map(mapSlot)
+      .filter(s => s.id && s.date && !isNaN(s.start) && !isNaN(s.end) && !(s.date<today) && !(s.date===today && s.start<=nowMin))
+      .sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:a.start-b.start);
+    renderDoctor();
+    selSlot=null; selDate = SLOTS[0] ? SLOTS[0].date : "";
+    renderSlots();
+  }catch(err){
+    hideDoctor();
+    $("slots").innerHTML = `<div class="state err"><h3>Couldn't load appointments</h3><p>${esc(err.message)}</p><button class="btn" onclick="loadSlots()">Try again</button></div>`;
+  }
+}
+
+function hideDoctor(){ $("doctor").style.display="none"; $("main").style.gridTemplateColumns="1fr"; }
+function renderDoctor(){
+  const d=DOCTOR;
+  if(!d){ hideDoctor(); return; }
+  const av = d.img ? `<img class="av" src="${esc(d.img)}" alt="${esc(d.name)}" onerror="this.outerHTML='<div class=&quot;av&quot;>${esc(initials(d.name))}</div>'">` : `<div class="av">${esc(initials(d.name))}</div>`;
+  const place=[d.address,d.city].filter(Boolean).join(", ")+(d.pin?" – "+d.pin:"");
+  $("doctor").innerHTML = `<div class="who">${av}<div><h2>${esc(d.name)}</h2>${d.spec?`<span class="spec">${esc(d.spec)}</span>`:""}</div></div>
+    ${d.qual?`<div class="qual">${esc(d.qual)}</div>`:""}
+    <div class="facts"><div><small>Experience</small><strong>${d.exp} yrs</strong></div>
+    <div><small>Consultation fee</small><strong>${d.fee?CONFIG.CURRENCY+d.fee.toLocaleString("en-IN"):"On request"}</strong></div></div>
+    <div class="loc">${d.clinic?`<b>${esc(d.clinic)}</b><br>`:""}${esc(place)}</div>`;
+}
+
+function renderSlots(){
+  if(!SLOTS.length){
+    $("slots").innerHTML = `<div class="state"><h3>No slots available right now</h3><p>${RECEIVED ? "The doctor has "+RECEIVED+" slot"+(RECEIVED>1?"s":"")+", but all of them are dates or times that have already passed. Please check back later." : "This doctor has no open appointments. Please check back later or choose another doctor."}</p><button class="btn ghost" onclick="history.back()">Back to doctors</button></div>`;
+    return;
+  }
+  const dates=[...new Set(SLOTS.map(s=>s.date))];
+  const dchips = dates.map(k=>{ const o=dateObj(k);
+    return `<button type="button" class="date" aria-pressed="${k===selDate}" data-date="${k}">
+      <small>${o.toLocaleDateString("en-IN",{weekday:"short"})}</small><strong>${o.getDate()}</strong><small>${o.toLocaleDateString("en-IN",{month:"short"})}</small></button>`; }).join("");
+  const tchips = SLOTS.filter(s=>s.date===selDate).map(s=>
+    `<button type="button" class="time" aria-pressed="${selSlot&&selSlot.id===s.id}" data-id="${esc(s.id)}">${fmt12(s.start)}<small>to ${fmt12(s.end)}</small></button>`).join("");
+  $("slots").innerHTML = `<h3>Choose a date and time</h3><p class="sub">${SLOTS.length} available slot${SLOTS.length>1?"s":""}</p>
+    <div class="dates" role="group" aria-label="Dates">${dchips}</div>
+    <div class="times" role="group" aria-label="Times">${tchips}</div>
+    <div class="summary"><p>${selSlot?`Selected<b>${esc(dateLong(selSlot.date))}, ${fmt12(selSlot.start)} – ${fmt12(selSlot.end)}</b>`:"Select a time slot to continue"}</p>
+    <button class="btn" type="button" id="bookBtn" ${selSlot?"":"disabled"}>Book appointment</button></div>`;
+}
+$("slots").addEventListener("click", e=>{
+  const dt=e.target.closest(".date"), tm=e.target.closest(".time"), bk=e.target.closest("#bookBtn");
+  if(dt){ selDate=dt.dataset.date; if(selSlot&&selSlot.date!==selDate) selSlot=null; renderSlots(); }
+  else if(tm){ selSlot=SLOTS.find(s=>s.id===tm.dataset.id)||null; renderSlots(); }
+  else if(bk && selSlot){ openForm(); }
+});
+
+/* ---------- booking form ---------- */
+const dlg=$("dlg");
+function openForm(){
+  $("chosen").textContent = dateLong(selSlot.date)+", "+fmt12(selSlot.start)+" – "+fmt12(selSlot.end)+(DOCTOR?" · "+DOCTOR.name:"");
+  $("pSlot").value = selSlot.id;
+  $("formErr").style.display="none"; $("submitBtn").disabled=false; $("submitBtn").textContent="Book appointment";
+  dlg.showModal(); $("pName").focus();
+}
+$("dlgX").addEventListener("click",()=>dlg.close());
+dlg.addEventListener("click",e=>{ if(e.target===dlg) dlg.close(); });
+
+function check(id, ok){ $(id).closest(".f").classList.toggle("bad", !ok); return ok; }
+$("form").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const name=$("pName").value.trim(), email=$("pEmail").value.trim(), phone=$("pPhone").value.trim();
+  const ok = [check("pName", name.length>1), check("pEmail", /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)), check("pPhone", phone.replace(/\D/g,"").length>=10)].every(Boolean);
+  if(!ok) return;
+  const btn=$("submitBtn"); btn.disabled=true; btn.textContent="Booking…"; $("formErr").style.display="none";
+  const payload = {
+    slotId:selSlot.id, slotRowId:selSlot.rowId, doctorId:DOCTOR_ID, doctorName:DOCTOR?DOCTOR.name:"", clinicName:DOCTOR?DOCTOR.clinic:"",
+    date:selSlot.date, startTime:fmt24(selSlot.start), endTime:fmt24(selSlot.end),
+    dateLabel:dateLong(selSlot.date), startLabel:fmt12(selSlot.start), endLabel:fmt12(selSlot.end),
+    patientName:name, email, phone, age:$("pAge").value.trim(), gender:$("pGender").value, reason:$("pReason").value.trim()
+  };
+  try{
+    if(!CONFIG.BOOK_FLOW_URL) throw new Error("BOOK_FLOW_URL is empty. Paste your flow 2 URL in CONFIG.");
+    // No custom headers: avoids the CORS preflight request that Power Automate can't answer.
+    const r = await callFlow(CONFIG.BOOK_FLOW_URL, { method:"POST", body:JSON.stringify(payload) });
+    const status = String((r && r.status) || "booked").toLowerCase();
+    if(status==="unavailable" || status==="taken"){
+      dlg.close(); alert((r && r.message) || "Sorry, that slot was just taken. Please pick another time.");
+      loadSlots(); return;
+    }
+    if(status!=="booked" && status!=="pending" && status!=="success") throw new Error((r && r.message) || "Booking failed. Please try again.");
+    $("dlgTitle").textContent="Booked";
+    $("dlgBody").innerHTML = `<div class="state ok"><div class="tick">&#10003;</div><h3>Booked! Check your email</h3>
+      <p>We've emailed <b>${esc(email)}</b>. Open the email and click <b>Confirm</b> to finalise your appointment on ${esc(dateLong(selSlot.date))} at ${fmt12(selSlot.start)}. Your booking is final only after you confirm.</p>
+      <button class="btn" type="button" onclick="document.getElementById('dlg').close();loadSlots()">Done</button></div>`;
+  }catch(err){
+    btn.disabled=false; btn.textContent="Book appointment";
+    const f=$("formErr"); f.textContent=err.message; f.style.display="block";
+  }
+});
+
+/* ---------- start ---------- */
+loadSlots();
+</script>
+</body>
+</html>

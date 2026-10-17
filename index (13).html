@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ApptoDoctor – Find doctors in your city</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#10283c; --muted:#5d7080; --line:#dbe6ea; --mist:#eef5f6; --paper:#ffffff;
+  --teal:#0b7f84; --teal-dark:#075f63; --teal-soft:#d9f0f0; --amber:#f2a93b;
+  --head:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --body:'Figtree','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--body);color:var(--ink);background:var(--mist);line-height:1.5}
+input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+header{background:var(--ink);color:#fff}
+.bar{max-width:1180px;margin:0 auto;padding:18px 20px;display:flex;align-items:center;gap:12px}
+.logo{width:40px;height:40px;border-radius:12px;background:var(--amber);color:var(--ink);display:grid;place-items:center;font:800 24px var(--head)}
+.brand{font:700 22px var(--head);letter-spacing:-.01em}
+.hero{max-width:1180px;margin:0 auto;padding:30px 20px 64px}
+.hero h1{font:800 clamp(30px,5.5vw,56px)/1.05 var(--head);letter-spacing:-.025em;max-width:720px}
+.hero p{color:#b9cbd6;margin-top:12px;max-width:520px;font-size:17px}
+.search{margin-top:24px;max-width:520px;background:#fff;border-radius:16px;padding:8px}
+.search input{width:100%;border:0;padding:11px 14px;font-size:16px;background:transparent}
+.search input:focus-visible{outline:none}
+.search:focus-within{outline:3px solid var(--amber)}
+
+main{max-width:1180px;margin:-32px auto 60px;padding:0 20px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:26px}
+.panel h2{font:700 22px var(--head)}
+.sub{color:var(--muted);font-size:15px;margin:2px 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(210px,100%),1fr));gap:14px}
+.city{display:flex;flex-direction:column;gap:14px;text-decoration:none;color:inherit;background:var(--mist);border:1.5px solid transparent;border-radius:18px;padding:18px;transition:transform .2s,box-shadow .2s,border-color .2s,background .2s}
+.city:hover{background:#fff;border-color:var(--teal);box-shadow:0 10px 26px rgba(16,40,60,.1);transform:translateY(-3px)}
+.mono{width:52px;height:52px;border-radius:14px;background:var(--teal);color:#fff;display:grid;place-items:center;font:800 24px var(--head)}
+.city:nth-child(4n+2) .mono{background:var(--ink)}
+.city:nth-child(4n+3) .mono{background:var(--amber);color:var(--ink)}
+.city:nth-child(4n+4) .mono{background:var(--teal-soft);color:var(--teal-dark)}
+.city h3{font:700 20px var(--head);line-height:1.15}
+.city small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.go{margin-top:auto;font-weight:600;font-size:14px;color:var(--teal)}
+.city:hover .go{color:var(--teal-dark)}
+.none{grid-column:1/-1;text-align:center;padding:30px 10px;color:var(--muted)}
+.none a{color:var(--teal);font-weight:600}
+
+footer{text-align:center;color:var(--muted);font-size:14px;padding:0 20px 36px}
+
+@media (max-width:520px){
+  .brand{font-size:19px}
+  .logo{width:36px;height:36px;font-size:21px}
+  .hero{padding:20px 16px 56px}
+  .hero p{font-size:15px}
+  .bar{padding-left:16px;padding-right:16px}
+  main{padding:0 16px}
+  .panel{padding:18px;border-radius:18px}
+  .grid{grid-template-columns:1fr 1fr;gap:10px}
+  .city{padding:14px;gap:10px}
+  .mono{width:44px;height:44px;font-size:20px}
+  .city h3{font-size:17px}
+}
+@media (max-width:340px){.grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="logo" aria-hidden="true">A</div>
+    <div class="brand">ApptoDoctor</div>
+  </div>
+  <div class="hero">
+    <h1>Find the right doctor in your city</h1>
+    <p>Choose your city to see doctors, check their fees and book an appointment.</p>
+    <div class="search"><input id="q" type="search" placeholder="Search your city" aria-label="Search city" autocomplete="off"></div>
+  </div>
+</header>
+
+<main>
+  <section class="panel">
+    <h2>Popular cities</h2>
+    <p class="sub" id="sub">Tap a city to see its doctors.</p>
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+<footer>&copy; <span id="yr"></span> ApptoDoctor</footer>
+
+<script>
+/* ============ CONFIG – edit these ============ */
+const CONFIG = {
+  // Your doctors page. Cards open: DOCTORS_PAGE?location=<city>
+  DOCTORS_PAGE: "apptodoctor.html",
+  // name = shown on the card, value = sent in the URL. "value" must match the City text stored in Dataverse.
+  CITIES: [
+    { name:"Mumbai",     value:"Mumbai",     state:"Maharashtra" },
+    { name:"Pune",       value:"Pune",       state:"Maharashtra" },
+    { name:"Delhi",      value:"Delhi",      state:"Delhi NCR" },
+    { name:"Bangalore",  value:"Bangalore",  state:"Karnataka" },
+    { name:"Hyderabad",  value:"Hyderabad",  state:"Telangana" },
+    { name:"Chennai",    value:"Chennai",    state:"Tamil Nadu" },
+    { name:"Kolkata",    value:"Kolkata",    state:"West Bengal" },
+    { name:"Ahmedabad",  value:"Ahmedabad",  state:"Gujarat" },
+    { name:"Jaipur",     value:"Jaipur",     state:"Rajasthan" },
+    { name:"Lucknow",    value:"Lucknow",    state:"Uttar Pradesh" },
+    { name:"Nagpur",     value:"Nagpur",     state:"Maharashtra" },
+    { name:"Chandigarh", value:"Chandigarh", state:"Chandigarh" }
+  ]
+};
+/* ============================================= */
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const link = v => CONFIG.DOCTORS_PAGE + "?location=" + encodeURIComponent(v);
+
+function render(){
+  const q = $("q").value.trim();
+  const list = CONFIG.CITIES.filter(c => (c.name + " " + c.state).toLowerCase().includes(q.toLowerCase()));
+  $("sub").textContent = q ? list.length + " result" + (list.length === 1 ? "" : "s") : "Tap a city to see its doctors.";
+  $("grid").innerHTML = list.length
+    ? list.map(c => `<a class="city" href="${esc(link(c.value))}" aria-label="Doctors in ${esc(c.name)}">
+        <div class="mono" aria-hidden="true">${esc(c.name[0])}</div>
+        <div><h3>${esc(c.name)}</h3><small>${esc(c.state)}</small></div>
+        <span class="go">View doctors &rarr;</span></a>`).join("")
+    : `<div class="none">No city matches “${esc(q)}”. <a href="${esc(link(q))}">Search doctors in ${esc(q)}</a></div>`;
+}
+$("q").addEventListener("input", render);
+$("q").addEventListener("keydown", e => {
+  if(e.key === "Enter"){
+    const q = $("q").value.trim(); if(!q) return;
+    const m = CONFIG.CITIES.filter(c => c.name.toLowerCase().includes(q.toLowerCase()));
+    location.href = link(m.length === 1 ? m[0].value : q);
+  }
+});
+$("yr").textContent = new Date().getFullYear();
+render();
+</script>
+</body>
+</html>
