@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prescription Viewer Portal</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Inter', 'sans-serif'] },
+        aspectRatio: { 'a4': '210 / 297' }
+      }
+    }
+  }
+</script>
+<style>
+  .paper-shadow {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  }
+  @media print {
+    body * { visibility: hidden; }
+    #printArea, #printArea * { visibility: visible; }
+    #printArea { position: absolute; left: 0; top: 0; width: 100%; }
+  }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased">
+
+  <!-- Navigation Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold shadow-sm">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight">Prescription Portal</h1>
+          <p class="text-xs text-slate-500">Medical Document Retrieval System</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+          <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-500 rounded-full"></span> Connected
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Search Section -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 mb-6 shadow-sm">
+      <label for="rxInput" class="block text-sm font-semibold text-slate-700 mb-2">
+        Enter Prescription / Registration Number
+      </label>
+      <form id="rxForm" class="flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+          <input 
+            id="rxInput" 
+            type="text" 
+            placeholder="e.g. RX-20261021-10" 
+            class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition font-medium text-sm"
+            required
+            autocomplete="off"
+          >
+        </div>
+        <button 
+          id="searchBtn" 
+          type="submit" 
+          class="px-6 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+        >
+          <span id="btnText">Search Prescription</span>
+          <svg id="btnSpinner" class="hidden animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </button>
+      </form>
+    </div>
+
+    <!-- Status Alerts -->
+    <div id="statusAlert" class="hidden mb-6 p-4 rounded-xl text-sm border flex items-start gap-3 transition-all">
+      <div id="statusIcon" class="shrink-0 mt-0.5"></div>
+      <div>
+        <h4 id="statusTitle" class="font-bold"></h4>
+        <p id="statusMsg" class="text-xs sm:text-sm mt-0.5 opacity-90"></p>
+      </div>
+    </div>
+
+    <!-- Actions Toolbar (Shows when document loaded) -->
+    <div id="toolbar" class="hidden flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 mb-6 shadow-sm">
+      <div class="flex items-center space-x-2">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Viewing Rx:</span>
+        <span id="currentRxTag" class="text-sm font-bold text-slate-800"></span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button onclick="window.print()" class="px-3.5 py-2 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          <span>Print</span>
+        </button>
+        <a id="downloadBtn" target="_blank" rel="noopener" class="px-3.5 py-2 text-xs font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg transition flex items-center gap-1.5">
+          <span>Open Full Size</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Document Viewer Box -->
+    <div class="flex justify-center">
+      <div id="printArea" class="w-full max-w-3xl aspect-a4 bg-white border border-slate-200 rounded-2xl paper-shadow overflow-hidden relative flex items-center justify-center">
+        
+        <!-- Empty State Placeholder -->
+        <div id="emptyState" class="p-8 text-center max-w-md">
+          <div class="w-16 h-16 mx-auto mb-4 bg-slate-100 rounded-full flex items-center justify-center text-slate-400">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold text-slate-800 mb-1">Ready for Search</h3>
+          <p class="text-xs text-slate-500">Enter a prescription registration number in the search bar above to fetch and display the official image document.</p>
+        </div>
+
+        <!-- Prescription Image Rendering -->
+        <img id="prescriptionImage" alt="Prescription Document" class="hidden w-full h-full object-contain">
+        
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
+    <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-400">
+      &copy; Medical Prescription Viewer &bull; Powered by MyDrSlot
+    </div>
+  </footer>
+
+<script>
+  // Power Automate POST URL
+  const FLOW_URL = "https://3194f3baa5b1e555a57785512f7ae2.da.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/02/workflows/df0ec3a50f57485281af35a8cab50216/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=aXwJbrsLGRewL9Rjym8kx3iWgdHzrrQXgCbpJ_DgwVk";
+  
+  const rxForm = document.getElementById('rxForm');
+  const rxInput = document.getElementById('rxInput');
+  const searchBtn = document.getElementById('searchBtn');
+  const btnText = document.getElementById('btnText');
+  const btnSpinner = document.getElementById('btnSpinner');
+  
+  const statusAlert = document.getElementById('statusAlert');
+  const statusIcon = document.getElementById('statusIcon');
+  const statusTitle = document.getElementById('statusTitle');
+  const statusMsg = document.getElementById('statusMsg');
+  
+  const toolbar = document.getElementById('toolbar');
+  const currentRxTag = document.getElementById('currentRxTag');
+  const downloadBtn = document.getElementById('downloadBtn');
+  
+  const emptyState = document.getElementById('emptyState');
+  const prescriptionImage = document.getElementById('prescriptionImage');
+
+  function setLoading(loading) {
+    searchBtn.disabled = loading;
+    if (loading) {
+      btnText.textContent = "Fetching...";
+      btnSpinner.classList.remove('hidden');
+    } else {
+      btnText.textContent = "Search Prescription";
+      btnSpinner.classList.add('hidden');
+    }
+  }
+
+  function showAlert(type, title, message) {
+    statusAlert.classList.remove('hidden', 'bg-red-50', 'border-red-200', 'text-red-900', 'bg-blue-50', 'border-blue-200', 'text-blue-900', 'bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+    
+    if (type === 'error') {
+      statusAlert.classList.add('bg-red-50', 'border-red-200', 'text-red-900');
+      statusIcon.innerHTML = '<svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+    } else if (type === 'info') {
+      statusAlert.classList.add('bg-blue-50', 'border-blue-200', 'text-blue-900');
+      statusIcon.innerHTML = '<svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+    } else if (type === 'success') {
+      statusAlert.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+      statusIcon.innerHTML = '<svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+    }
+
+    statusTitle.textContent = title;
+    statusMsg.textContent = message;
+    statusAlert.classList.remove('hidden');
+  }
+
+  function parseImageUrl(data) {
+    var text = (data || '').trim();
+    try {
+      var json = JSON.parse(text);
+      if (typeof json === 'string') return json;
+      return json.imageUrl || json.url || json.link || json.jpg || json.imageLink || '';
+    } catch(e) {
+      return text.replace(/^"|"$/g, '');
+    }
+  }
+
+  function fetchPrescription(reg) {
+    if (!reg) return;
+
+    // Sync input value and update URL query without page refresh
+    rxInput.value = reg;
+    try {
+      var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?reg=' + encodeURIComponent(reg);
+      window.history.replaceState({ path: newUrl }, '', newUrl);
+    } catch(e) {}
+
+    setLoading(true);
+    toolbar.classList.add('hidden');
+    emptyState.classList.remove('hidden');
+    prescriptionImage.classList.add('hidden');
+    prescriptionImage.removeAttribute('src');
+
+    showAlert('info', 'Connecting to Flow', 'Requesting prescription details for ' + reg + ' via POST...');
+
+    // Payload sent in HTTP POST body
+    var postData = JSON.stringify({ reg: reg, rx: reg });
+
+    fetch(FLOW_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: postData
+    })
+    .then(function(res) {
+      if (!res.ok) {
+        throw new Error('HTTP ' + res.status + ': Server error returned from Power Automate.');
+      }
+      return res.text();
+    })
+    .then(function(text) {
+      var imgUrl = parseImageUrl(text);
+      if (!imgUrl) {
+        throw new Error('No valid image URL returned for prescription ' + reg);
+      }
+
+      // Preload image in background
+      prescriptionImage.onload = function() {
+        emptyState.classList.add('hidden');
+        prescriptionImage.classList.remove('hidden');
+        currentRxTag.textContent = reg;
+        downloadBtn.href = imgUrl;
+        toolbar.classList.remove('hidden');
+        showAlert('success', 'Prescription Loaded', 'Document for ' + reg + ' retrieved successfully.');
+        setLoading(false);
+      };
+
+      prescriptionImage.onerror = function() {
+        throw new Error('Image URL received, but image failed to load in browser.');
+      };
+
+      prescriptionImage.src = imgUrl;
+    })
+    .catch(function(err) {
+      showAlert('error', 'Unable to Fetch Document', err.message);
+      setLoading(false);
+    });
+  }
+
+  // Form submit handler
+  rxForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var val = rxInput.value.trim();
+    if (val) {
+      fetchPrescription(val);
+    }
+  });
+
+  // Automatically trigger flow on page load if ?reg=123 or ?rx=123 is present in URL
+  window.addEventListener('DOMContentLoaded', function() {
+    var params = new URLSearchParams(window.location.search);
+    var reg = params.get('reg') || params.get('rx');
+    if (reg) {
+      fetchPrescription(reg.trim());
+    }
+  });
+</script>
+</body>
+</html>
