@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ApptoDoctor – Find doctors near you</title>
+<title>MyDrSlot – Find doctors near you</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
@@ -173,7 +173,7 @@ body{overflow-x:hidden}
 <header>
   <div class="bar">
     <div class="logo" aria-hidden="true">A</div>
-    <div class="brand">ApptoDoctor</div>
+    <div class="brand">MyDrSlot</div>
   </div>
   <div class="hero">
     <h1 id="heroTitle">Find the right doctor</h1>
@@ -386,7 +386,7 @@ function card(d,i){
     ${d.qual?`<div class="qual">${esc(d.qual)}</div>`:""}
     <div class="facts">
       <div><small>Experience</small><strong>${d.exp} yrs</strong></div>
-      <div><small>Consultation fee</small><strong>${d.fee?CONFIG.CURRENCY+d.fee.toLocaleString("en-IN"):"On request"}</strong></div>
+      <div><small>Consultation fee</small><strong>${d.fee?CONFIG.CURRENCY+d.fee.toLocaleString("en-IN"):"Free"}</strong></div>
     </div>
     <div class="loc">${d.clinic?`<b>${esc(d.clinic)}</b><br>`:""}${esc(place)}</div>
     <div class="actions"><button type="button" onclick="onBook(${i})">Book appointment</button></div>
