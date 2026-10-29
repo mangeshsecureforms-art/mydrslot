@@ -31,7 +31,7 @@ header{background:var(--ink);color:#fff}
 .finder input{flex:1;border:0;padding:10px 12px;font-size:16px;background:transparent;min-width:0;color:var(--ink);-webkit-text-fill-color:var(--ink)}
 .finder input::placeholder{color:var(--muted);opacity:1;-webkit-text-fill-color:var(--muted)}
 .finder input:focus-visible{outline:none}
-.btn{border:0;border-radius:10px;padding:10px 20px;background:var(--teal);color:#fff;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+.btn{border:0;border-radius:10px;padding:10px 20px;background:var(--teal);color:#fff;font-weight:600;cursor:pointer}
 .btn:hover{background:var(--teal-dark)}
 
 main{max-width:1180px;margin:-34px auto 60px;padding:0 20px}
@@ -45,7 +45,6 @@ main{max-width:1180px;margin:-34px auto 60px;padding:0 20px}
 .city b{font:700 18px var(--head)}
 .city small{color:var(--muted);font-size:13px}
 .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:20px}
-.all{margin-top:20px;text-align:center}
 
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:14px;margin-top:20px}
 .step{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px}
@@ -96,7 +95,7 @@ main{max-width:1180px;margin:-34px auto 60px;padding:0 20px}
 
 <script>
 /* ============ CONFIG – edit these ============ */
-// Built-in city logos (simple drawings). To use your own image instead, replace the logo value with its URL.
+// Built-in city logos (simple drawings). To use your own image, replace the logo value with its URL.
 const svgLogo = svg => "data:image/svg+xml;utf8," + encodeURIComponent(svg);
 
 const MUMBAI_LOGO = svgLogo(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
@@ -121,8 +120,8 @@ const PUNE_LOGO = svgLogo(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 
 </svg>`);
 
 const CONFIG = {
-  // Page that contains the doctors list (your previous page). City opens: DOCTORS_URL?location=<city>
-  DOCTORS_URL: "doctors",
+  // Address of your doctors page. Use a leading slash, no .html. City opens: /doctors?location=<city>
+  DOCTORS_URL: "https://bookings.mydrslot.in/doctors",
   // City name (exactly as in your data) → logo image
   CITIES: [
     { name: "Mumbai", logo: MUMBAI_LOGO },
@@ -137,8 +136,7 @@ const go = city => CONFIG.DOCTORS_URL + (city ? "?location=" + encodeURIComponen
 
 function logo(c){
   const fb = esc(c.name.charAt(0).toUpperCase());
-  const ok = c.logo && !/^PASTE_/.test(c.logo);
-  return ok
+  return c.logo
     ? `<img class="city-logo" src="${esc(c.logo)}" alt="${esc(c.name)} logo" loading="lazy" onerror="this.outerHTML='<div class=&quot;city-logo&quot;>${fb}</div>'">`
     : `<div class="city-logo" aria-hidden="true">${fb}</div>`;
 }
@@ -153,8 +151,9 @@ $("search").addEventListener("input", render);
 $("finder").addEventListener("submit", e => {
   e.preventDefault();
   const q = $("search").value.trim().toLowerCase();
-  const match = CONFIG.CITIES.find(c => c.name.toLowerCase() === q) || CONFIG.CITIES.filter(c => c.name.toLowerCase().includes(q))[0];
-  location.href = go(match ? match.name : $("search").value.trim());
+  const match = CONFIG.CITIES.find(c => c.name.toLowerCase() === q) || CONFIG.CITIES.find(c => c.name.toLowerCase().includes(q));
+  if(match) location.href = go(match.name);
+  else render();
 });
 render();
 </script>
