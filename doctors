@@ -167,12 +167,15 @@ body{overflow-x:hidden}
   .facts div+div{border-left:0;border-top:1px solid var(--line)}
 }
 @media (max-height:480px) and (orientation:landscape){aside.open .sheet-foot{position:static}}
+
+/* ===== Company logo (added) ===== */
+.logo-img{width:44px;height:44px;border-radius:12px;object-fit:contain;background:#fff;padding:2px;flex:none}
 </style>
 </head>
 <body>
 <header>
   <div class="bar">
-    <div class="logo" aria-hidden="true">A</div>
+    <img class="logo-img" src="https://lh3.googleusercontent.com/d/101IjPNemPAweGvobuuuBVRxoYeoBABru" alt="MyDrSlot logo">
     <div class="brand">MyDrSlot</div>
   </div>
   <div class="hero">
