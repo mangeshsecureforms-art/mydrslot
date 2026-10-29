@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ApptoDoctor – Book appointment</title>
+<title>MyDrSlot – Book appointment</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
@@ -177,13 +177,24 @@ img{max-width:100%}
   dialog{max-height:96vh;max-height:96dvh}
   .hero{padding-bottom:28px}
 }
+
+/* ===== Company logo (added) ===== */
+.logo-img{width:44px;height:44px;border-radius:12px;object-fit:contain;background:#fff;padding:2px;flex:none}
+
+/* ===== Online / Offline toggle (added) ===== */
+.f .seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--mist);padding:4px;border-radius:12px}
+.f .seg label{position:relative;margin:0;cursor:pointer}
+.f .seg input{position:absolute;opacity:0;width:0;height:0;min-height:0;padding:0;border:0}
+.f .seg span{display:block;text-align:center;padding:10px 6px;border-radius:9px;font-weight:600;font-size:14px;color:var(--muted);transition:background .15s,color .15s}
+.f .seg input:checked+span{background:var(--teal);color:#fff}
+.f .seg input:focus-visible+span{outline:3px solid var(--amber);outline-offset:2px}
 </style>
 </head>
 <body>
 <header>
   <div class="bar">
-    <div class="logo" aria-hidden="true">A</div>
-    <div class="brand">ApptoDoctor</div>
+    <img class="logo-img" src="https://lh3.googleusercontent.com/d/101IjPNemPAweGvobuuuBVRxoYeoBABru" alt="MyDrSlot logo">
+    <div class="brand">MyDrSlot</div>
   </div>
   <div class="hero">
     <button class="back" type="button" onclick="history.back()">&larr; Back to doctors</button>
@@ -203,6 +214,11 @@ img{max-width:100%}
     <div class="chosen" id="chosen"></div>
     <form id="form" novalidate>
       <div class="f"><label for="pSlot">Slot ID</label><input id="pSlot" readonly tabindex="-1"></div>
+      <div class="f"><label id="modeLbl">Appointment type</label>
+        <div class="seg" role="radiogroup" aria-labelledby="modeLbl">
+          <label><input type="radio" name="pMode" value="Offline" checked><span>Offline (In-clinic)</span></label>
+          <label><input type="radio" name="pMode" value="Online"><span>Online (Video)</span></label>
+        </div></div>
       <div class="f"><label for="pName">Full name *</label><input id="pName" autocomplete="name"><div class="e">Please enter your name.</div></div>
       <div class="row">
         <div class="f"><label for="pEmail">Email *</label><input id="pEmail" type="email" autocomplete="email"><div class="e">Enter a valid email.</div></div>
@@ -363,9 +379,11 @@ $("slots").addEventListener("click", e=>{
 
 /* ---------- booking form ---------- */
 const dlg=$("dlg");
+const getMode = () => (document.querySelector('input[name="pMode"]:checked') || {}).value || "Offline";
 function openForm(){
   $("chosen").textContent = dateLong(selSlot.date)+", "+fmt12(selSlot.start)+" – "+fmt12(selSlot.end)+(DOCTOR?" · "+DOCTOR.name:"");
   $("pSlot").value = selSlot.id;
+  document.querySelector('input[name="pMode"][value="Offline"]').checked = true;
   $("formErr").style.display="none"; $("submitBtn").disabled=false; $("submitBtn").textContent="Book appointment";
   dlg.showModal(); $("pName").focus();
 }
@@ -379,11 +397,13 @@ $("form").addEventListener("submit", async e=>{
   const ok = [check("pName", name.length>1), check("pEmail", /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)), check("pPhone", phone.replace(/\D/g,"").length>=10)].every(Boolean);
   if(!ok) return;
   const btn=$("submitBtn"); btn.disabled=true; btn.textContent="Booking…"; $("formErr").style.display="none";
+  const mode = getMode();
   const payload = {
     slotId:selSlot.id, slotRowId:selSlot.rowId, doctorId:DOCTOR_ID, doctorName:DOCTOR?DOCTOR.name:"", clinicName:DOCTOR?DOCTOR.clinic:"",
     date:selSlot.date, startTime:fmt24(selSlot.start), endTime:fmt24(selSlot.end),
     dateLabel:dateLong(selSlot.date), startLabel:fmt12(selSlot.start), endLabel:fmt12(selSlot.end),
-    patientName:name, email, phone, age:$("pAge").value.trim(), gender:$("pGender").value, reason:$("pReason").value.trim()
+    patientName:name, email, phone, age:$("pAge").value.trim(), gender:$("pGender").value, reason:$("pReason").value.trim(),
+    appointmentMode:mode, isOnline:mode==="Online"
   };
   try{
     if(!CONFIG.BOOK_FLOW_URL) throw new Error("BOOK_FLOW_URL is empty. Paste your flow 2 URL in CONFIG.");
@@ -397,7 +417,7 @@ $("form").addEventListener("submit", async e=>{
     if(status!=="booked" && status!=="pending" && status!=="success") throw new Error((r && r.message) || "Booking failed. Please try again.");
     $("dlgTitle").textContent="Booked";
     $("dlgBody").innerHTML = `<div class="state ok"><div class="tick">&#10003;</div><h3>Booked! Check your email</h3>
-      <p>We've emailed <b>${esc(email)}</b>. Open the email and click <b>Confirm</b> to finalise your appointment on ${esc(dateLong(selSlot.date))} at ${fmt12(selSlot.start)}. Your booking is final only after you confirm.</p>
+      <p>We've emailed <b>${esc(email)}</b>. Open the email and click <b>Confirm</b> to finalise your ${esc(mode.toLowerCase())} appointment on ${esc(dateLong(selSlot.date))} at ${fmt12(selSlot.start)}. Your booking is final only after you confirm.</p>
       <button class="btn" type="button" onclick="document.getElementById('dlg').close();loadSlots()">Done</button></div>`;
   }catch(err){
     btn.disabled=false; btn.textContent="Book appointment";
