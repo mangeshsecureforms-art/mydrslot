@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MyDrSlot – Book a doctor near you</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#10283c; --muted:#5d7080; --line:#dbe6ea; --mist:#eef5f6; --paper:#ffffff;
+  --teal:#0b7f84; --teal-dark:#075f63; --teal-soft:#d9f0f0; --amber:#f2a93b;
+  --head:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --body:'Figtree','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--body);color:var(--ink);background:var(--mist);line-height:1.5;overflow-x:hidden}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+header{background:var(--ink);color:#fff}
+.bar{max-width:1180px;margin:0 auto;padding:18px 20px;display:flex;align-items:center;gap:12px}
+.logo-img{width:44px;height:44px;border-radius:12px;object-fit:contain;background:#fff;padding:2px;flex:none}
+.brand{font:700 22px var(--head);letter-spacing:-.01em}
+.hero{max-width:1180px;margin:0 auto;padding:18px 20px 70px}
+.hero h1{font:800 clamp(28px,4.5vw,46px)/1.1 var(--head);letter-spacing:-.02em;max-width:640px}
+.hero p{color:#b9cbd6;margin-top:10px;max-width:520px}
+.finder{display:flex;gap:10px;margin-top:22px;max-width:560px;background:#fff;padding:8px;border-radius:16px}
+.finder input{flex:1;border:0;padding:10px 12px;font-size:16px;background:transparent;min-width:0;color:var(--ink);-webkit-text-fill-color:var(--ink)}
+.finder input::placeholder{color:var(--muted);opacity:1;-webkit-text-fill-color:var(--muted)}
+.finder input:focus-visible{outline:none}
+.btn{border:0;border-radius:10px;padding:10px 20px;background:var(--teal);color:#fff;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--teal-dark)}
+
+main{max-width:1180px;margin:-34px auto 60px;padding:0 20px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:22px}
+.panel h2{font:700 20px var(--head)}
+.panel > p{color:var(--muted);font-size:14px;margin-top:2px}
+.cities{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:14px;margin-top:18px}
+.city{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;text-decoration:none;color:var(--ink);background:var(--mist);border:1px solid var(--line);border-radius:16px;padding:20px 12px;transition:box-shadow .2s,transform .2s,border-color .2s}
+.city:hover{box-shadow:0 10px 28px rgba(16,40,60,.1);transform:translateY(-2px);border-color:var(--teal)}
+.city-logo{width:84px;height:84px;border-radius:20px;object-fit:cover;background:var(--teal-soft);color:var(--teal-dark);display:grid;place-items:center;font:800 32px var(--head)}
+.city b{font:700 18px var(--head)}
+.city small{color:var(--muted);font-size:13px}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:20px}
+.all{margin-top:20px;text-align:center}
+
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:14px;margin-top:20px}
+.step{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px}
+.step span{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--teal-soft);color:var(--teal-dark);font:700 15px var(--head)}
+.step h3{font:700 16px var(--head);margin-top:8px}
+.step p{font-size:14px;color:var(--muted)}
+
+@media (hover:none){.city:hover{transform:none;box-shadow:none}}
+@media (max-width:520px){
+  .brand{font-size:19px}
+  .hero h1{font-size:26px}
+  .hero p{font-size:14px}
+  .bar,.hero,main{padding-left:16px;padding-right:16px}
+  .city-logo{width:68px;height:68px;font-size:26px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <img class="logo-img" src="https://lh3.googleusercontent.com/d/101IjPNemPAweGvobuuuBVRxoYeoBABru" alt="MyDrSlot logo">
+    <div class="brand">MyDrSlot</div>
+  </div>
+  <div class="hero">
+    <h1>Book a doctor near you</h1>
+    <p>Choose your city to see doctors, compare fees and experience, and book your appointment.</p>
+    <form class="finder" id="finder" autocomplete="off">
+      <input id="search" type="search" placeholder="Search your city" aria-label="Search your city">
+      <button class="btn" type="submit">Find doctors</button>
+    </form>
+  </div>
+</header>
+
+<main>
+  <section class="panel">
+    <h2>Choose your city</h2>
+    <p>Tap a city to see doctors available there.</p>
+    <div class="cities" id="cities"></div>
+  </section>
+
+  <div class="steps">
+    <div class="step"><span>1</span><h3>Pick your city</h3><p>Select where you want to see a doctor.</p></div>
+    <div class="step"><span>2</span><h3>Filter and compare</h3><p>Use specialization, experience, fee and PIN code.</p></div>
+    <div class="step"><span>3</span><h3>Book your slot</h3><p>Choose a doctor and book your appointment.</p></div>
+  </div>
+</main>
+
+<script>
+/* ============ CONFIG – edit these ============ */
+// Built-in city logos (simple drawings). To use your own image instead, replace the logo value with its URL.
+const svgLogo = svg => "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+
+const MUMBAI_LOGO = svgLogo(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+<rect width="120" height="120" rx="26" fill="#d9f0f0"/>
+<rect x="24" y="36" width="10" height="48" fill="#075f63"/><rect x="86" y="36" width="10" height="48" fill="#075f63"/>
+<path d="M24 36q5-14 10 0z" fill="#075f63"/><path d="M86 36q5-14 10 0z" fill="#075f63"/>
+<rect x="30" y="44" width="60" height="40" fill="#0b7f84"/>
+<path d="M48 84V64a12 12 0 0 1 24 0V84z" fill="#d9f0f0"/>
+<path d="M44 44q16-26 32 0z" fill="#f2a93b"/><rect x="59" y="20" width="2" height="8" fill="#f2a93b"/>
+<rect x="20" y="84" width="80" height="7" fill="#075f63"/>
+<path d="M16 102q10-6 20 0t20 0t20 0t20 0t20 0" stroke="#0b7f84" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>`);
+
+const PUNE_LOGO = svgLogo(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+<rect width="120" height="120" rx="26" fill="#d9f0f0"/>
+<rect x="14" y="40" width="14" height="52" fill="#075f63"/><rect x="92" y="40" width="14" height="52" fill="#075f63"/>
+<path d="M14 40q7-12 14 0z" fill="#075f63"/><path d="M92 40q7-12 14 0z" fill="#075f63"/>
+<rect x="28" y="56" width="64" height="36" fill="#0b7f84"/>
+<g fill="#0b7f84"><rect x="28" y="48" width="8" height="8"/><rect x="40" y="48" width="8" height="8"/><rect x="52" y="48" width="8" height="8"/><rect x="64" y="48" width="8" height="8"/><rect x="76" y="48" width="8" height="8"/></g>
+<path d="M48 92V74a12 12 0 0 1 24 0V92z" fill="#f2a93b"/>
+<rect x="8" y="92" width="104" height="7" fill="#075f63"/>
+</svg>`);
+
+const CONFIG = {
+  // Page that contains the doctors list (your previous page). City opens: DOCTORS_URL?location=<city>
+  DOCTORS_URL: "doctors",
+  // City name (exactly as in your data) → logo image
+  CITIES: [
+    { name: "Mumbai", logo: MUMBAI_LOGO },
+    { name: "Pune",   logo: PUNE_LOGO }
+  ]
+};
+/* ============================================= */
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const go = city => CONFIG.DOCTORS_URL + (city ? "?location=" + encodeURIComponent(city) : "");
+
+function logo(c){
+  const fb = esc(c.name.charAt(0).toUpperCase());
+  const ok = c.logo && !/^PASTE_/.test(c.logo);
+  return ok
+    ? `<img class="city-logo" src="${esc(c.logo)}" alt="${esc(c.name)} logo" loading="lazy" onerror="this.outerHTML='<div class=&quot;city-logo&quot;>${fb}</div>'">`
+    : `<div class="city-logo" aria-hidden="true">${fb}</div>`;
+}
+function render(){
+  const q = $("search").value.trim().toLowerCase();
+  const list = CONFIG.CITIES.filter(c => c.name.toLowerCase().includes(q));
+  $("cities").innerHTML = list.length
+    ? list.map(c => `<a class="city" href="${esc(go(c.name))}">${logo(c)}<b>${esc(c.name)}</b><small>View doctors</small></a>`).join("")
+    : `<div class="empty">No city found. Please try Mumbai or Pune.</div>`;
+}
+$("search").addEventListener("input", render);
+$("finder").addEventListener("submit", e => {
+  e.preventDefault();
+  const q = $("search").value.trim().toLowerCase();
+  const match = CONFIG.CITIES.find(c => c.name.toLowerCase() === q) || CONFIG.CITIES.filter(c => c.name.toLowerCase().includes(q))[0];
+  location.href = go(match ? match.name : $("search").value.trim());
+});
+render();
+</script>
+</body>
+</html>
