@@ -15,19 +15,29 @@
   --body:'Figtree','Segoe UI',system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0}
-body{font-family:var(--body);color:var(--ink);background:var(--mist);line-height:1.5}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--body);color:var(--ink);background:var(--mist);line-height:1.5;overflow-x:hidden}
+img{max-width:100%}
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--amber);outline-offset:2px}
 
 header{background:var(--ink);color:#fff}
-.bar{max-width:1180px;margin:0 auto;padding:18px 20px;display:flex;align-items:center;gap:12px}
-.logo{width:40px;height:40px;border-radius:12px;background:var(--amber);color:var(--ink);display:grid;place-items:center;font:800 24px var(--head)}
+.bar{max-width:860px;margin:0 auto;padding:18px 20px;display:flex;align-items:center;gap:12px}
+.logo-img{width:44px;height:44px;border-radius:12px;object-fit:contain;background:#fff;padding:2px;flex:none}
 .brand{font:700 22px var(--head);letter-spacing:-.01em}
-.hero{max-width:1180px;margin:0 auto;padding:18px 20px 44px}
-.hero h1{font:800 clamp(26px,4.5vw,42px)/1.1 var(--head);letter-spacing:-.02em}
-.hero p{color:#b9cbd6;margin-top:10px;max-width:520px}
-.back{background:none;border:0;color:#b9cbd6;cursor:pointer;padding:0 0 10px;font-weight:600}
+.hero{max-width:860px;margin:0 auto;padding:6px 20px 52px}
+.back{background:none;border:0;color:#b9cbd6;cursor:pointer;padding:6px 0 12px;min-height:44px;font-weight:600}
 .back:hover{color:#fff}
+
+/* ----- doctor header (new) ----- */
+.docbar{display:flex;align-items:center;gap:18px;min-height:96px}
+.av{width:96px;height:96px;border-radius:24px;object-fit:cover;flex:none;background:var(--teal-soft);color:var(--teal-dark);
+  border:3px solid rgba(255,255,255,.9);display:grid;place-items:center;font:700 32px var(--head)}
+.docbar .txt{min-width:0}
+.docbar h1{font:800 clamp(26px,4.5vw,40px)/1.1 var(--head);letter-spacing:-.02em;overflow-wrap:anywhere}
+.spec{display:inline-block;margin-top:8px;background:var(--amber);color:var(--ink);font-size:14px;font-weight:600;padding:3px 12px;border-radius:99px}
+.hero p.hint{color:#b9cbd6;margin-top:16px;max-width:520px}
+.docsk{width:100%;max-width:420px;height:96px;border-radius:24px;background:linear-gradient(90deg,#1c3b52 25%,#274a64 50%,#1c3b52 75%);background-size:200% 100%;animation:sh 1.2s infinite}
 
 .btn{border:0;border-radius:10px;padding:12px 22px;background:var(--teal);color:#fff;font-weight:600;cursor:pointer}
 .btn:hover:not(:disabled){background:var(--teal-dark)}
@@ -35,23 +45,8 @@ header{background:var(--ink);color:#fff}
 .btn.ghost{background:transparent;color:var(--teal);border:1.5px solid var(--teal)}
 .btn.ghost:hover{background:var(--teal-soft)}
 
-main{max-width:1180px;margin:-24px auto 60px;padding:0 20px;display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start}
+main{max-width:860px;margin:-28px auto 60px;padding:0 20px}
 .panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:22px}
-.doc{position:sticky;top:16px;display:flex;flex-direction:column;gap:14px}
-.who{display:flex;gap:14px;align-items:center}
-.av{width:76px;height:76px;border-radius:18px;object-fit:cover;flex:none;background:var(--teal-soft);color:var(--teal-dark);display:grid;place-items:center;font:700 26px var(--head)}
-.who h2{font:700 20px var(--head);line-height:1.2}
-.who>div{min-width:0}
-.spec{display:inline-block;margin-top:4px;background:var(--teal-soft);color:var(--teal-dark);font-size:13px;font-weight:600;padding:2px 10px;border-radius:99px}
-.qual{font-size:14px;color:var(--muted)}
-.facts{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:12px}
-.facts div{padding:10px 12px}
-.facts div+div{border-left:1px solid var(--line)}
-.facts small{display:block;color:var(--muted);font-size:12px}
-.facts strong{font:700 17px var(--head)}
-.loc{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
-.loc b{color:var(--ink)}
-
 .panel h3{font:700 18px var(--head)}
 .sub{font-size:14px;color:var(--muted);margin:2px 0 14px}
 .dates{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px;scrollbar-width:thin}
@@ -97,50 +92,33 @@ dialog::backdrop{background:rgba(16,40,60,.55)}
 .f.bad input,.f.bad select{border-color:var(--danger)}
 .formerr{color:var(--danger);font-size:14px;margin-top:12px;display:none;overflow-wrap:anywhere}
 .mbody .btn{width:100%;margin-top:18px}
+.f .seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--mist);padding:4px;border-radius:12px}
+.f .seg label{position:relative;margin:0;cursor:pointer}
+.f .seg input{position:absolute;opacity:0;width:0;height:0;min-height:0;padding:0;border:0}
+.f .seg span{display:block;text-align:center;padding:10px 6px;border-radius:9px;font-weight:600;font-size:14px;color:var(--muted);transition:background .15s,color .15s}
+.f .seg input:checked+span{background:var(--teal);color:#fff}
+.f .seg input:focus-visible+span{outline:3px solid var(--amber);outline-offset:2px}
 
-@media (max-width:1024px){main{grid-template-columns:300px 1fr;gap:18px}}
-@media (max-width:860px){
-  main{grid-template-columns:1fr;padding:0 16px;margin-top:-20px}
-  .doc{position:static}
-  .bar,.hero{padding-left:16px;padding-right:16px}
-  .hero{padding-bottom:36px}
-}
-@media (max-width:520px){
-  .brand{font-size:19px}
-  .logo{width:36px;height:36px;font-size:21px}
-  .panel{padding:16px;border-radius:16px}
-  .row{grid-template-columns:1fr;gap:0}
-  .summary{flex-direction:column;align-items:stretch}
-  .summary .btn{width:100%}
-  .mhead{padding:16px 16px 0}.mbody{padding:12px 16px 18px}
-}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-
-/* ===== Mobile polish (CSS only) ===== */
-html{-webkit-text-size-adjust:100%}
-body{overflow-x:hidden}
-img{max-width:100%}
 @media (hover:none){
   .date:hover,.time:hover{border-color:var(--line)}
-  .date[aria-pressed=true]:hover{border-color:var(--teal)}
-  .time[aria-pressed=true]:hover{border-color:var(--teal)}
+  .date[aria-pressed=true]:hover,.time[aria-pressed=true]:hover{border-color:var(--teal)}
 }
 @media (max-width:860px){
-  .back{padding:6px 0 12px;min-height:44px}
   .dates{margin:0 -16px;padding:4px 16px 12px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .dates::-webkit-scrollbar{display:none}
   .date{scroll-snap-align:start}
-  .doc .who{gap:12px}
-  .av{width:64px;height:64px;font-size:22px}
+  main{padding:0 16px}
+  .bar,.hero{padding-left:16px;padding-right:16px}
 }
 @media (max-width:520px){
-  .hero{padding-top:6px;padding-bottom:34px}
-  .hero h1{font-size:26px}
-  .hero p{font-size:14px}
-  main{margin-top:-18px;margin-bottom:0;padding-bottom:0}
-  .panel{padding:16px 16px 0}
-  .doc{padding-bottom:16px}
-  #slots{padding-bottom:0;border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom:0}
+  .brand{font-size:19px}
+  .logo-img{width:38px;height:38px}
+  .hero{padding-bottom:40px}
+  .docbar{gap:14px}
+  .av{width:76px;height:76px;border-radius:20px;font-size:26px}
+  .hero p.hint{font-size:14px;margin-top:12px}
+  main{margin-top:-22px;margin-bottom:0;padding-bottom:0}
+  .panel{padding:16px 16px 0;border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom:0}
   .panel h3{font-size:17px}
   .sub{margin-bottom:10px}
   .date{width:64px;min-height:72px;padding:8px 2px}
@@ -148,17 +126,13 @@ img{max-width:100%}
   .times{grid-template-columns:1fr 1fr;gap:8px}
   .time{min-height:52px;padding:10px 6px}
   .state{padding:28px 8px}
-
-  /* sticky booking bar */
-  .summary{position:sticky;bottom:0;z-index:5;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:10px;
-    margin:18px -16px 0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));
-    background:#fff;border-top:1px solid var(--line);box-shadow:0 -6px 18px rgba(16,40,60,.08)}
+  .row{grid-template-columns:1fr;gap:0}
+  .summary{position:sticky;bottom:0;z-index:5;flex-wrap:nowrap;gap:10px;margin:18px -16px 0;
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid var(--line);box-shadow:0 -6px 18px rgba(16,40,60,.08)}
   .summary p{flex:1;min-width:0;font-size:12px;line-height:1.3}
   .summary b{font-size:13.5px}
   .summary .btn{width:auto;flex:none;padding:13px 16px;min-height:46px;font-size:15px}
-
-  /* booking form as a bottom sheet */
-  dialog{width:100%;max-width:none;max-height:92vh;max-height:92dvh;margin:auto 0 0;border-radius:20px 20px 0 0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  dialog{width:100%;max-width:none;max-height:92vh;max-height:92dvh;margin:auto 0 0;border-radius:20px 20px 0 0;overflow-y:auto}
   .mhead{position:sticky;top:0;background:#fff;z-index:2;padding:16px 16px 8px;border-radius:20px 20px 0 0}
   .mbody{padding:6px 16px calc(20px + env(safe-area-inset-bottom,0px))}
   .x{font-size:30px;min-width:44px;min-height:44px}
@@ -166,28 +140,13 @@ img{max-width:100%}
   .f input,.f select,.f textarea{font-size:16px;padding:12px;min-height:46px}
   .f textarea{min-height:84px}
   .mbody .btn{min-height:50px;font-size:16px}
-  .chosen{font-size:13px}
 }
 @media (max-width:360px){
   .times{grid-template-columns:1fr}
   .summary{flex-wrap:wrap}
   .summary .btn{width:100%}
 }
-@media (max-height:480px) and (orientation:landscape){
-  dialog{max-height:96vh;max-height:96dvh}
-  .hero{padding-bottom:28px}
-}
-
-/* ===== Company logo (added) ===== */
-.logo-img{width:44px;height:44px;border-radius:12px;object-fit:contain;background:#fff;padding:2px;flex:none}
-
-/* ===== Online / Offline toggle (added) ===== */
-.f .seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--mist);padding:4px;border-radius:12px}
-.f .seg label{position:relative;margin:0;cursor:pointer}
-.f .seg input{position:absolute;opacity:0;width:0;height:0;min-height:0;padding:0;border:0}
-.f .seg span{display:block;text-align:center;padding:10px 6px;border-radius:9px;font-weight:600;font-size:14px;color:var(--muted);transition:background .15s,color .15s}
-.f .seg input:checked+span{background:var(--teal);color:#fff}
-.f .seg input:focus-visible+span{outline:3px solid var(--amber);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -198,13 +157,12 @@ img{max-width:100%}
   </div>
   <div class="hero">
     <button class="back" type="button" onclick="history.back()">&larr; Back to doctors</button>
-    <h1 id="heroTitle">Book your appointment</h1>
-    <p id="heroSub">Pick a date and time that suits you. We'll email you to confirm.</p>
+    <div class="docbar" id="docbar"><div class="docsk"></div></div>
+    <p class="hint">Pick a date and time that suits you. We'll email you to confirm.</p>
   </div>
 </header>
 
 <main id="main">
-  <aside class="panel doc" id="doctor" aria-label="Doctor details"><div class="sk"></div></aside>
   <section class="panel" id="slots" aria-live="polite"><div class="sk"></div></section>
 </main>
 
@@ -239,13 +197,10 @@ img{max-width:100%}
 <script>
 /* ============ CONFIG – edit these ============ */
 const CONFIG = {
-  // Flow 1: load doctor + available slots. Called as  URL&ID=<doctor id>
   SLOTS_FLOW_URL: "https://3194f3baa5b1e555a57785512f7ae2.da.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/23/workflows/015d4e9315964027bfbe56e9c327a60b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=u0g0Mnl-2NmhJDDppNGFoAyTRRpUav7_pClHo6Z6mzU",
-  SLOTS_METHOD: "POST",      // must match the trigger Method in flow 1
+  SLOTS_METHOD: "POST",
   ID_PARAM: "ID",
-  // Flow 2: receives the booking form, holds the slot and emails the patient (Confirm / Cancel).
-  BOOK_FLOW_URL: "https://3194f3baa5b1e555a57785512f7ae2.da.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/22/workflows/aa437be109e64a308dc7db64b9684a90/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=M5k0H24UswYw1KsQzJu0OIGE0kdJ1JkhwUxdu8bsBsg",
-  CURRENCY: "₹"
+  BOOK_FLOW_URL: "https://3194f3baa5b1e555a57785512f7ae2.da.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/22/workflows/aa437be109e64a308dc7db64b9684a90/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=M5k0H24UswYw1KsQzJu0OIGE0kdJ1JkhwUxdu8bsBsg"
 };
 /* ============================================= */
 
@@ -256,25 +211,26 @@ const DOCTOR_ID = (params.get("ID") || params.get("id") || "").trim();
 let DOCTOR = null, SLOTS = [], RECEIVED = 0, selDate = "", selSlot = null;
 
 /* ---------- helpers ---------- */
+// "Doctor Name", "doctor_name", "cr123_DoctorName" all become "doctorname"
 const norm = k => String(k).toLowerCase().replace(/^[a-z0-9]{2,8}_(?=[a-z])/,"").replace(/[^a-z0-9]/g,"");
 const ALIASES = {
-  name:["doctorname","name"], spec:["specialization","specialisation","speciality","specialty"], qual:["qualification","qualifications"],
-  exp:["experience","yearsofexperience"], fee:["consultationfee","fee","fees"], clinic:["clinicname","clinic"],
-  address:["address"], city:["city"], pin:["pincode","pin","zipcode"],
-  img:["doctorimageurl","doctorimgurl","profileimageurl","imageurl","imgurl","doctorimage","profileimage","image","photo"],
-  id:["doctorid","id"],
+  name:["doctorname","name"],
+  spec:["speciality","specialization","specialisation","specialty"],
+  img:["doctorimageurl","doctorimgurl","imageurl","imgurl","doctorimage","profileimageurl","profileimage","image","photo"],
   date:["date","slotdate"], start:["starttime","start"], end:["endtime","end"], slotid:["slotid"]
 };
 function picker(raw){
   const flat={}; for(const k in raw){ if(!k.includes("@")) flat[norm(k)]=raw[k]; }
   return f => { for(const a of ALIASES[f]) if(flat[a]!==undefined && flat[a]!==null && flat[a]!=="") return flat[a]; return ""; };
 }
-const num = v => { const n=parseFloat(String(v).replace(/[^0-9.]/g,"")); return isNaN(n)?0:n; };
-function imgSrc(v){ v=String(v||""); return /^(https?:|data:|\/)/i.test(v) ? v : (/^[A-Za-z0-9+/=\s]{100,}$/.test(v) ? "data:image/jpeg;base64,"+v.replace(/\s/g,"") : ""); }
+function imgSrc(v){
+  if(v && typeof v==="object") v = v.serverUrl && v.serverRelativeUrl ? v.serverUrl+v.serverRelativeUrl : (v.Url||v.url||"");
+  v=String(v||"").trim();
+  return /^(https?:|data:|\/)/i.test(v) ? v : (/^[A-Za-z0-9+/=\s]{100,}$/.test(v) ? "data:image/jpeg;base64,"+v.replace(/\s/g,"") : "");
+}
 function mapDoctor(raw){
   const p=picker(raw||{});
-  return { name:String(p("name")), spec:String(p("spec")), qual:String(p("qual")), exp:num(p("exp")), fee:num(p("fee")),
-    clinic:String(p("clinic")), address:String(p("address")), city:String(p("city")), pin:String(p("pin")), img:imgSrc(p("img")) };
+  return { name:String(p("name")).trim(), spec:String(p("spec")).trim(), img:imgSrc(p("img")) };
 }
 const pad = n => String(n).padStart(2,"0");
 function parseDateKey(v){ const m=String(v).match(/(\d{4})-(\d{2})-(\d{2})/); return m ? m[1]+"-"+m[2]+"-"+m[3] : ""; }
@@ -297,7 +253,7 @@ function mapSlot(raw){
   const start=parseMinutes(s), end=parseMinutes(e);
   const date=parseDateKey(p("date")) || parseDateKey(s);
   const rowId=String(raw.Id ?? raw.id ?? "");
-  const id=String(p("slotid")) || rowId;   // "Slot ID" column; falls back to the row Id
+  const id=String(p("slotid")) || rowId;
   return { id, rowId, date, start, end };
 }
 
@@ -313,19 +269,20 @@ const withParam = (url,k,v) => url + (url.includes("?")?"&":"?") + encodeURIComp
 /* ---------- load doctor + slots ---------- */
 async function loadSlots(){
   $("slots").innerHTML = '<div class="sk"></div>';
+  $("docbar").innerHTML = '<div class="docsk"></div>';
   try{
-    if(!CONFIG.SLOTS_FLOW_URL) throw new Error("SLOTS_FLOW_URL is empty. Paste your flow 1 URL in CONFIG.");
+    if(!CONFIG.SLOTS_FLOW_URL) throw new Error("SLOTS_FLOW_URL is empty.");
     if(!DOCTOR_ID) throw new Error("No doctor selected. Open this page as appointments?ID=<doctor id>.");
     const data = await callFlow(withParam(CONFIG.SLOTS_FLOW_URL, CONFIG.ID_PARAM, DOCTOR_ID), { method: CONFIG.SLOTS_METHOD });
     let doc=null, rows=[];
-    if(Array.isArray(data)){ rows=data; doc=data[0]; }
+    if(Array.isArray(data)){ rows=data; doc=data[0]; }               // array of slots; doctor fields repeat on each row
     else if(data && typeof data==="object"){
-      doc = data.doctor || data.Doctor || null;
+      doc = data.doctor || data.Doctor || null;                       // or { doctor:{...}, slots:[...] }
       rows = data.slots || data.Slots || data.value || [];
       if(!doc && rows[0]) doc = rows[0];
     }
     DOCTOR = doc ? mapDoctor(doc) : null;
-    if(DOCTOR && !DOCTOR.name) DOCTOR = null;   // slots-only response: no doctor panel
+    if(DOCTOR && !DOCTOR.name) DOCTOR = null;
     RECEIVED = rows.length;
     const now=new Date(), today=now.getFullYear()+"-"+pad(now.getMonth()+1)+"-"+pad(now.getDate()), nowMin=now.getHours()*60+now.getMinutes();
     SLOTS = rows.map(mapSlot)
@@ -335,22 +292,19 @@ async function loadSlots(){
     selSlot=null; selDate = SLOTS[0] ? SLOTS[0].date : "";
     renderSlots();
   }catch(err){
-    hideDoctor();
+    $("docbar").innerHTML = '<h1>Book your appointment</h1>';
     $("slots").innerHTML = `<div class="state err"><h3>Couldn't load appointments</h3><p>${esc(err.message)}</p><button class="btn" onclick="loadSlots()">Try again</button></div>`;
   }
 }
 
-function hideDoctor(){ $("doctor").style.display="none"; $("main").style.gridTemplateColumns="1fr"; }
 function renderDoctor(){
   const d=DOCTOR;
-  if(!d){ hideDoctor(); return; }
-  const av = d.img ? `<img class="av" src="${esc(d.img)}" alt="${esc(d.name)}" onerror="this.outerHTML='<div class=&quot;av&quot;>${esc(initials(d.name))}</div>'">` : `<div class="av">${esc(initials(d.name))}</div>`;
-  const place=[d.address,d.city].filter(Boolean).join(", ")+(d.pin?" – "+d.pin:"");
-  $("doctor").innerHTML = `<div class="who">${av}<div><h2>${esc(d.name)}</h2>${d.spec?`<span class="spec">${esc(d.spec)}</span>`:""}</div></div>
-    ${d.qual?`<div class="qual">${esc(d.qual)}</div>`:""}
-    <div class="facts"><div><small>Experience</small><strong>${d.exp} yrs</strong></div>
-    <div><small>Consultation fee</small><strong>${d.fee?CONFIG.CURRENCY+d.fee.toLocaleString("en-IN"):"On request"}</strong></div></div>
-    <div class="loc">${d.clinic?`<b>${esc(d.clinic)}</b><br>`:""}${esc(place)}</div>`;
+  if(!d){ $("docbar").innerHTML = '<h1>Book your appointment</h1>'; return; }
+  const fallback = `<div class="av">${esc(initials(d.name))}</div>`;
+  const av = d.img
+    ? `<img class="av" src="${esc(d.img)}" alt="${esc(d.name)}" referrerpolicy="no-referrer" onerror="this.outerHTML=this.dataset.fb" data-fb="${esc(fallback)}">`
+    : fallback;
+  $("docbar").innerHTML = `${av}<div class="txt"><h1>${esc(d.name)}</h1>${d.spec?`<span class="spec">${esc(d.spec)}</span>`:""}</div>`;
 }
 
 function renderSlots(){
@@ -399,15 +353,14 @@ $("form").addEventListener("submit", async e=>{
   const btn=$("submitBtn"); btn.disabled=true; btn.textContent="Booking…"; $("formErr").style.display="none";
   const mode = getMode();
   const payload = {
-    slotId:selSlot.id, slotRowId:selSlot.rowId, doctorId:DOCTOR_ID, doctorName:DOCTOR?DOCTOR.name:"", clinicName:DOCTOR?DOCTOR.clinic:"",
+    slotId:selSlot.id, slotRowId:selSlot.rowId, doctorId:DOCTOR_ID, doctorName:DOCTOR?DOCTOR.name:"", speciality:DOCTOR?DOCTOR.spec:"",
     date:selSlot.date, startTime:fmt24(selSlot.start), endTime:fmt24(selSlot.end),
     dateLabel:dateLong(selSlot.date), startLabel:fmt12(selSlot.start), endLabel:fmt12(selSlot.end),
     patientName:name, email, phone, age:$("pAge").value.trim(), gender:$("pGender").value, reason:$("pReason").value.trim(),
     appointmentMode:mode, isOnline:mode==="Online"
   };
   try{
-    if(!CONFIG.BOOK_FLOW_URL) throw new Error("BOOK_FLOW_URL is empty. Paste your flow 2 URL in CONFIG.");
-    // No custom headers: avoids the CORS preflight request that Power Automate can't answer.
+    if(!CONFIG.BOOK_FLOW_URL) throw new Error("BOOK_FLOW_URL is empty.");
     const r = await callFlow(CONFIG.BOOK_FLOW_URL, { method:"POST", body:JSON.stringify(payload) });
     const status = String((r && r.status) || "booked").toLowerCase();
     if(status==="unavailable" || status==="taken"){
@@ -425,7 +378,6 @@ $("form").addEventListener("submit", async e=>{
   }
 });
 
-/* ---------- start ---------- */
 loadSlots();
 </script>
 </body>
